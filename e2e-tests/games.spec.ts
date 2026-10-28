@@ -24,6 +24,22 @@ test.describe('Lista gier i nawigacja', () => {
     });
   });
 
+  test('wyświetla ocenę każdej gry w skali do pięciu gwiazdek', async ({ page }) => {
+    await test.step('Przejdź na stronę główną', async () => {
+      await page.goto('/');
+    });
+
+    await test.step('Sprawdź, że każda karta zawiera ocenę', async () => {
+      const gameCards = page.getByTestId('game-card');
+      const gameRatings = page.getByTestId('game-rating');
+      await expect(gameRatings).toHaveCount(await gameCards.count());
+
+      for (const gameRating of await gameRatings.all()) {
+        await expect(gameRating).toContainText(/[0-5]\.\d/);
+      }
+    });
+  });
+
   test('po kliknięciu gry przechodzi na właściwą stronę szczegółów', async ({ page }) => {
     let gameId: string | null;
     let gameTitle: string | null;
